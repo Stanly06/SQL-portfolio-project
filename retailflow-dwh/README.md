@@ -12,9 +12,9 @@ Simula una tienda e-commerce latinoamericana y recorre todo el ciclo de vida del
                                                                          (watermark + MERGE)
 ```
 
-## ¿Qué demuestra este proyecto? (lo que piden las vacantes)
+## Técnicas aplicadas
 
-| Habilidad que piden las ofertas | Dónde está |
+| Técnica | Dónde está |
 |---|---|
 | Window functions: `ROW_NUMBER`, `RANK`, `DENSE_RANK`, `NTILE`, `LAG/LEAD`, `FIRST_VALUE/LAST_VALUE`, `PERCENT_RANK`, frames `ROWS` vs `RANGE` | `analytics/a01`–`a10`, `02_staging.sql`, `03_dimensional_model.sql` |
 | CTEs y CTEs recursivos (jerarquías) | `03_dimensional_model.sql`, `a09` |
@@ -57,7 +57,7 @@ retailflow-dwh/
 │       ├── a09_recursive_hierarchy.sql
 │       └── a10_customer_ltv_churn.sql
 ├── docs/
-│   ├── guia_entrevistas.md         # Conceptos explicados + preguntas de entrevista
+│   ├── conceptos_tecnicos.md       # Explicación de las técnicas usadas
 │   ├── postgres_vs_sqlserver.md    # Equivalencias T-SQL <-> PostgreSQL
 │   └── roadmap.md                  # Próximas fases del proyecto
 ├── run_all.sh / run_all.ps1        # Ejecuta todo el pipeline (Linux-Mac / Windows)
@@ -120,17 +120,17 @@ Pipeline completado OK.
 patrones de negocio reales: productos estrella (Pareto), crecimiento, pico de Black Friday, abandono de
 carrito mayor en mobile, duplicados de ingesta y datos sucios.
 
-## Hallazgos de ejemplo (lo que contarías en una entrevista)
+## Hallazgos con los datos sintéticos
 - **Estacionalidad:** noviembre casi duplica las ventas de octubre (Black Friday) → `a01`.
 - **Pareto:** ~40% de los productos genera el 80% de los ingresos → `a02`.
 - **Funnel:** mobile pierde mucho más en el paso carrito → checkout (≈45% vs ≈60% en desktop) → `a06`.
 - **SCD2:** permite atribuir cada venta a la ciudad donde vivía el cliente *cuando compró* → `a10`.
 - **Bug atrapado por los tests:** usar `now()` como `_ingested_at` en datos de prueba movía el watermark al
-  futuro y el siguiente lote se saltaba; el test de completitud lo detectó → ver `docs/guia_entrevistas.md`.
+  futuro y el siguiente lote se saltaba; el test de completitud lo detectó → ver `docs/conceptos_tecnicos.md`.
 
 ## Cómo estudiar con este proyecto
 1. Ejecuta todo una vez y explora las tablas de cada capa.
 2. Lee cada archivo: **cada consulta empieza con la pregunta de negocio** y explica la técnica.
 3. Antes de mirar la solución de cada análisis, intenta escribirla tú.
-4. Usa `docs/guia_entrevistas.md` para practicar explicándolo en voz alta.
+4. Consulta `docs/conceptos_tecnicos.md` para la explicación de cada técnica.
 5. Sigue el `docs/roadmap.md` para ampliar el proyecto (dbt, Airflow, Power BI).

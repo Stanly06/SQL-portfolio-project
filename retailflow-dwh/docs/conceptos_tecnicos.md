@@ -1,6 +1,6 @@
-# Guía de estudio y entrevistas — RetailFlow DWH
+# Conceptos técnicos aplicados — RetailFlow DWH
 
-Cada sección explica un concepto **como lo dirías en una entrevista**, y apunta al archivo donde lo aplicaste.
+Explicación de las técnicas usadas en el proyecto y del archivo donde se aplica cada una.
 
 ---
 
@@ -23,7 +23,7 @@ funcion() OVER (
 | Navegación | `LAG`, `LEAD`, `FIRST_VALUE`, `LAST_VALUE` | MoM/YoY, tiempo entre eventos, detectar cambios | `a01`, `a10`, `03` |
 | Agregados | `SUM/AVG/COUNT/MIN/MAX OVER` | Running totals, medias móviles, % del total | `a01`, `a02`, `a03` |
 
-**Orden lógico de ejecución de un SELECT** (pregunta frecuente):
+**Orden lógico de ejecución de un SELECT:**
 `FROM → JOIN → WHERE → GROUP BY → HAVING → WINDOW FUNCTIONS → SELECT → DISTINCT → ORDER BY → LIMIT`.
 Por eso **no puedes filtrar una window function en el `WHERE`**: se usa un CTE/subconsulta (ver `a02`) o
 `QUALIFY` en Snowflake/BigQuery/Databricks.
@@ -71,7 +71,7 @@ Un **índice único parcial** (`WHERE is_current`) garantiza una sola versión v
 - **Idempotente:** ejecutarlo 2 veces da el mismo resultado → no duplica. Se logra con `MERGE` / `INSERT ... ON CONFLICT`.
 - `MERGE` (PostgreSQL 15+, SQL Server, Snowflake): `WHEN MATCHED THEN UPDATE` / `WHEN NOT MATCHED THEN INSERT`.
 
-**Historia real de este proyecto (cuéntala en la entrevista):** al generar duplicados de prueba con
+**Incidente real durante el desarrollo:** al generar duplicados de prueba con
 `now() + 1 minute` como hora de ingesta, el watermark quedó en el futuro y el siguiente lote (ingerido
 segundos después) se ignoró. El test de **completitud** de `07_data_quality.sql` lo detectó (1,000 filas
 faltantes). Solución: timestamps de ingesta deterministas. Lección: *el watermark debe venir de un reloj
@@ -107,30 +107,7 @@ frescura. Es exactamente lo que hacen los *tests* de **dbt** (`unique`, `not_nul
 
 ---
 
-## 9. Preguntas de entrevista para practicar
-
-1. **¿Diferencia entre `ROW_NUMBER`, `RANK` y `DENSE_RANK`?** Con empates: 1,2,3 / 1,1,3 / 1,1,2 (`a02`).
-2. **¿Cómo eliminas duplicados conservando el registro más reciente?** `ROW_NUMBER` + `rn = 1` (`02`).
-3. **Encuentra el 2.º salario más alto por departamento.** `DENSE_RANK() ... = 2`.
-4. **¿Por qué `LAST_VALUE` devuelve la fila actual?** Por el frame por defecto (`a10`).
-5. **¿`WHERE` vs `HAVING`?** `WHERE` filtra filas antes de agrupar; `HAVING` filtra grupos.
-6. **¿`UNION` vs `UNION ALL`?** `UNION` elimina duplicados (más caro); `UNION ALL` no.
-7. **¿Qué es un CTE y cuándo usar uno recursivo?** Subconsulta con nombre; recursivo para jerarquías/grafos (`a09`).
-8. **Calcula usuarios activos en días consecutivos.** Gaps & Islands (`a05`).
-9. **¿Qué es SCD Tipo 2 y cómo lo implementas?** (`03`, `04`).
-10. **¿Cómo diseñas una carga incremental idempotente?** Watermark + `MERGE` (`04`).
-11. **¿Qué pasa si llegan datos tarde (late-arriving data)?** Watermark con margen (*lookback window*), reprocesar los últimos N días con `MERGE`.
-12. **¿Estrella vs copo de nieve?** (`03`).
-13. **¿Qué es el grano de una tabla de hechos?** (`03`).
-14. **Una consulta está lenta, ¿qué haces?** `EXPLAIN ANALYZE`, índices, sargabilidad, estadísticas, particiones (`08`).
-15. **¿Cuándo un índice NO ayuda?** Baja selectividad, funciones sobre la columna, tablas pequeñas.
-16. **¿Vista vs vista materializada?** La materializada guarda el resultado; hay que refrescarla (`08`).
-17. **Calcula la retención por cohorte mensual.** (`a03`).
-18. **Calcula la mediana sin `PERCENTILE_CONT`.** `ROW_NUMBER` ascendente y descendente, promedio de las filas centrales.
-19. **¿`COUNT(*)` vs `COUNT(col)` vs `COUNT(DISTINCT col)`?** `COUNT(col)` ignora NULLs.
-20. **¿Cómo pruebas la calidad de un pipeline?** Tests de unicidad, FK, reconciliación y frescura (`07`).
-
-### Mediana sin funciones de percentil (pregunta 18)
+## 9. Mediana sin funciones de percentil
 ```sql
 WITH v AS (
   SELECT order_value,
@@ -144,11 +121,3 @@ WHERE rn IN ((n + 1) / 2, (n + 2) / 2);   -- n impar: 1 fila central; n par: las
 ```
 > Trampa común: la versión con `ROW_NUMBER` ascendente **y** descendente falla cuando hay valores
 > empatados, porque cada ventana puede romper el empate en distinto orden. Esta versión usa una sola.
-
-## 10. Cómo presentar el proyecto (pitch de 60 segundos)
-> "Construí un data warehouse para un e-commerce en PostgreSQL con arquitectura medallion. Ingiero datos
-> crudos con duplicados y JSON, los limpio y deduplico con window functions, y los modelo en un esquema
-> estrella con una dimensión de clientes SCD Tipo 2. La tabla de hechos se carga de forma incremental e
-> idempotente con watermark y MERGE, y tengo 10 tests de calidad que, de hecho, detectaron un bug real de
-> watermark. Encima construí análisis de cohortes, RFM, funnel por sesión y Pareto, y optimicé con índices,
-> particionamiento y vistas materializadas para alimentar un dashboard."

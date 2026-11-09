@@ -1,5 +1,5 @@
 -- =====================================================================
--- a05 · Gaps & Islands y Sesionización  (problemas "difíciles" de entrevista)
+-- a05 · Gaps & Islands y Sesionización
 -- Funciones: ROW_NUMBER, LAG, SUM() OVER como contador acumulado
 -- =====================================================================
 

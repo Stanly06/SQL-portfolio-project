@@ -1,7 +1,7 @@
 -- =====================================================================
 -- 02_staging.sql  (capa SILVER)
 -- Limpieza, tipado y DEDUPLICACIÓN.
--- Técnicas clave de entrevista:
+-- Técnicas aplicadas:
 --   * ROW_NUMBER() OVER (PARTITION BY ... ORDER BY ...) para deduplicar
 --   * NULLIF / COALESCE / TRIM / LOWER / INITCAP para normalizar
 --   * CAST seguro de TEXT -> DATE/NUMERIC

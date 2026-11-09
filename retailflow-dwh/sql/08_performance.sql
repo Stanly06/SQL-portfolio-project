@@ -1,7 +1,7 @@
 -- =====================================================================
 -- 08_performance.sql
 -- Optimización: EXPLAIN ANALYZE, índices, vistas materializadas y
--- particionamiento declarativo. (Muy preguntado en entrevistas de DE.)
+-- particionamiento declarativo.
 -- =====================================================================
 SET client_min_messages = warning;
 
