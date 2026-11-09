@@ -1,0 +1,30 @@
+# Levanta PostgreSQL 16 + pgAdmin con un solo comando:  docker compose up -d
+# PostgreSQL -> localhost:5432  (usuario: analyst / clave: analyst / bd: retailflow)
+# pgAdmin    -> http://localhost:8080  (admin@local.dev / admin)
+services:
+  postgres:
+    image: postgres:16
+    container_name: retailflow-db
+    environment:
+      POSTGRES_USER: analyst
+      POSTGRES_PASSWORD: analyst
+      POSTGRES_DB: retailflow
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./:/project          # el proyecto completo dentro del contenedor
+      - pgdata:/var/lib/postgresql/data
+
+  pgadmin:
+    image: dpage/pgadmin4:8.12
+    container_name: retailflow-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@local.dev
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "8080:80"
+    depends_on:
+      - postgres
+
+volumes:
+  pgdata:
