@@ -5,7 +5,7 @@ import { useState, useSyncExternalStore, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import type { SearchEntry } from "./global-search";
 import { Sidebar, type SidebarBadges } from "./sidebar";
-import { Topbar, type TopbarNotification } from "./topbar";
+import { Topbar, type TopbarNotification, type TopbarUser } from "./topbar";
 
 const COLLAPSE_KEY = "kary:menu-contraido";
 const COLLAPSE_EVENT = "kary:menu-contraido";
@@ -33,11 +33,17 @@ export function AppShell({
   badges,
   searchIndex,
   notifications,
+  user,
+  logoutAction,
+  banner,
 }: {
   children: ReactNode;
   badges: SidebarBadges;
   searchIndex: SearchEntry[];
   notifications: TopbarNotification[];
+  user: TopbarUser | null;
+  logoutAction?: () => Promise<void>;
+  banner?: ReactNode;
 }) {
   const pathname = usePathname();
   const collapsed = useSyncExternalStore(subscribe, readCollapsed, () => false);
@@ -59,13 +65,21 @@ export function AppShell({
     <div className="min-h-screen">
       <Sidebar
         badges={badges}
+        isAdmin={user ? user.isAdmin : true}
         collapsed={collapsed && !mobileOpen}
         onToggleCollapsed={toggleCollapsed}
         mobileOpen={mobileOpen}
         onCloseMobile={() => setMobileOpen(false)}
       />
       <div className={cn("transition-[padding] duration-300", collapsed ? "lg:pl-[84px]" : "lg:pl-[268px]")}>
-        <Topbar onOpenMenu={() => setMobileOpen(true)} searchIndex={searchIndex} notifications={notifications} />
+        <Topbar
+          onOpenMenu={() => setMobileOpen(true)}
+          searchIndex={searchIndex}
+          notifications={notifications}
+          user={user}
+          logoutAction={logoutAction}
+        />
+        {banner}
         <main className="px-4 pb-10 pt-5 lg:px-8">{children}</main>
       </div>
     </div>

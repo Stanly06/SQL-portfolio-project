@@ -10,6 +10,7 @@ const CHANNEL: Record<RecentOrder["channel"], string> = {
   tienda: "Tienda",
   whatsapp: "WhatsApp",
   instagram: "Instagram",
+  tiktok: "TikTok",
 };
 
 export function RecentOrders({ orders }: { orders: RecentOrder[] }) {

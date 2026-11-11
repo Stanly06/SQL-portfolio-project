@@ -15,13 +15,14 @@ export interface SidebarBadges {
 
 interface Props {
   badges: SidebarBadges;
+  isAdmin: boolean;
   collapsed: boolean;
   onToggleCollapsed: () => void;
   mobileOpen: boolean;
   onCloseMobile: () => void;
 }
 
-export function Sidebar({ badges, collapsed, onToggleCollapsed, mobileOpen, onCloseMobile }: Props) {
+export function Sidebar({ badges, isAdmin, collapsed, onToggleCollapsed, mobileOpen, onCloseMobile }: Props) {
   const pathname = usePathname();
   const active = findNavItem(pathname);
   const [open, setOpen] = useState<string | null>(active?.children ? active.href : null);
@@ -79,7 +80,7 @@ export function Sidebar({ badges, collapsed, onToggleCollapsed, mobileOpen, onCl
 
         {/* Navegación */}
         <nav className="scroll-thin flex-1 space-y-1 overflow-y-auto px-3 py-2">
-          {NAV_ITEMS.map((item) => (
+          {NAV_ITEMS.filter((item) => isAdmin || !item.adminOnly).map((item) => (
             <NavEntry
               key={item.href}
               item={item}

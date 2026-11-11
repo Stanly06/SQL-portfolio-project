@@ -160,6 +160,8 @@ export function buildDemoDashboard(period: Period): DashboardData {
 
   return {
     isDemo: true,
+    canSeeFinancials: true,
+    receivables: RD(18_450),
     period,
     periodLabel: cfg.label,
     comparisonLabel: cfg.comparison,

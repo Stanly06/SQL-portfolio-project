@@ -19,7 +19,7 @@ function normalize(s: string) {
   return s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
 }
 
-export function GlobalSearch({ index }: { index: SearchEntry[] }) {
+export function GlobalSearch({ index, remote = false }: { index: SearchEntry[]; remote?: boolean }) {
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState(false);
   const [cursor, setCursor] = useState(0);
@@ -27,11 +27,31 @@ export function GlobalSearch({ index }: { index: SearchEntry[] }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const boxRef = useRef<HTMLDivElement>(null);
 
-  const results = useMemo(() => {
+  const [remoteResults, setRemoteResults] = useState<SearchEntry[]>([]);
+  const localResults = useMemo(() => {
     const q = normalize(query.trim());
-    if (!q) return [];
+    if (!q || remote) return [];
     return index.filter((e) => normalize(`${e.title} ${e.subtitle}`).includes(q)).slice(0, 8);
-  }, [index, query]);
+  }, [index, query, remote]);
+  const results = remote ? remoteResults : localResults;
+
+  // Con base de datos, la búsqueda se hace en el servidor (respeta los permisos de cada rol)
+  useEffect(() => {
+    if (!remote) return;
+    const q = query.trim();
+    if (q.length < 2) return;
+    const ctrl = new AbortController();
+    const t = setTimeout(() => {
+      fetch(`/api/buscar?q=${encodeURIComponent(q)}`, { signal: ctrl.signal })
+        .then((r) => (r.ok ? r.json() : []))
+        .then((rows: SearchEntry[]) => setRemoteResults(rows))
+        .catch(() => {});
+    }, 200);
+    return () => {
+      clearTimeout(t);
+      ctrl.abort();
+    };
+  }, [query, remote]);
 
   // Atajo Ctrl/⌘ + K
   useEffect(() => {

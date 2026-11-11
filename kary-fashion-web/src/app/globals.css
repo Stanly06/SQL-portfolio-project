@@ -83,3 +83,25 @@ h1, h2, h3, h4 {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Campos de formulario */
+@layer components {
+  .input {
+    @apply w-full rounded-xl border border-line bg-white px-3 py-2.5 text-sm text-ink outline-none transition-colors placeholder:text-muted/70 focus:border-pink/50 focus:ring-4 focus:ring-pink/10 disabled:bg-canvas;
+  }
+  .label {
+    @apply mb-1 block text-sm font-medium text-plum;
+  }
+  .table-base {
+    @apply w-full text-sm;
+  }
+  .table-base th {
+    @apply border-b border-line px-3 py-2.5 text-left text-xs font-semibold whitespace-nowrap text-plum;
+  }
+  .table-base td {
+    @apply border-b border-line/60 px-3 py-2.5 align-middle;
+  }
+  .table-base tbody tr:hover {
+    @apply bg-cream;
+  }
+}

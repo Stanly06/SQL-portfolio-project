@@ -29,6 +29,8 @@ export interface NavItem {
   phase: number;
   description: string;
   badgeKey?: "orders" | "stock";
+  /** Solo dueña y administradoras (costos, proveedores, finanzas). */
+  adminOnly?: boolean;
   children?: NavChild[];
 }
 
@@ -45,21 +47,20 @@ export const NAV_ITEMS: NavItem[] = [
     children: [
       { label: "Existencias", href: "/inventario" },
       { label: "Movimientos", href: "/inventario/movimientos" },
-      { label: "Ajustes", href: "/inventario/ajustes" },
     ] },
-  { label: "Compras", href: "/compras", icon: ShoppingCart, phase: 3,
+  { label: "Compras", adminOnly: true, href: "/compras", icon: ShoppingCart, phase: 3,
     description: "Órdenes de compra, recepción de mercancía y prorrateo de transporte." },
   { label: "Clientes", href: "/clientes", icon: Users, phase: 3,
     description: "CRM: historial de compras, total gastado y clientes recurrentes." },
-  { label: "Proveedores", href: "/proveedores", icon: Truck, phase: 3,
+  { label: "Proveedores", adminOnly: true, href: "/proveedores", icon: Truck, phase: 3,
     description: "Datos de contacto e historial de compras por proveedor." },
   { label: "Facturación", href: "/facturacion", icon: FileText, phase: 4,
     description: "Facturas en PDF y comprobantes fiscales (NCF / e-CF) de la DGII." },
-  { label: "Gastos", href: "/gastos", icon: Wallet, phase: 4,
+  { label: "Gastos", adminOnly: true, href: "/gastos", icon: Wallet, phase: 4,
     description: "Gastos operativos por categoría con comprobante opcional." },
-  { label: "Ganancias", href: "/ganancias", icon: TrendingUp, phase: 4,
+  { label: "Ganancias", adminOnly: true, href: "/ganancias", icon: TrendingUp, phase: 4,
     description: "Estado de resultados: ganancia bruta, operativa y neta, márgenes." },
-  { label: "Reportes", href: "/reportes", icon: ChartColumn, phase: 4,
+  { label: "Reportes", adminOnly: true, href: "/reportes", icon: ChartColumn, phase: 4,
     description: "Análisis por período, producto, categoría y cliente. Exportación a Excel, CSV y PDF.",
     children: [
       { label: "Ventas", href: "/reportes" },
@@ -72,7 +73,7 @@ export const NAV_ITEMS: NavItem[] = [
       { label: "Catálogo publicado", href: "/tienda-online" },
       { label: "Banners", href: "/tienda-online/banners" },
     ] },
-  { label: "Configuración", href: "/configuracion", icon: Settings, phase: 6,
+  { label: "Configuración", adminOnly: true, href: "/configuracion", icon: Settings, phase: 6,
     description: "Datos del negocio, usuarios, roles y permisos, impuestos y respaldos." },
 ];
 

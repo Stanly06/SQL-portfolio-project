@@ -43,14 +43,24 @@ const PERIODS = [
   { value: "anio", label: "Este año" },
 ];
 
+export interface TopbarUser {
+  name: string;
+  roleLabel: string;
+  isAdmin: boolean;
+}
+
 export function Topbar({
   onOpenMenu,
   searchIndex,
   notifications,
+  user,
+  logoutAction,
 }: {
   onOpenMenu: () => void;
   searchIndex: SearchEntry[];
   notifications: TopbarNotification[];
+  user: TopbarUser | null;
+  logoutAction?: () => Promise<void>;
 }) {
   const [unread, setUnread] = useState(true);
 
@@ -67,7 +77,7 @@ export function Topbar({
         </button>
 
         <div className="min-w-0 flex-1">
-          <GlobalSearch index={searchIndex} />
+          <GlobalSearch index={searchIndex} remote={user !== null} />
         </div>
 
         <CurrentDate />
@@ -126,24 +136,30 @@ export function Topbar({
               <User className="h-5 w-5" strokeWidth={1.8} />
             </span>
             <span className="hidden text-left sm:block">
-              <span className="block font-[family-name:var(--font-display)] text-sm font-semibold text-plum">Admin</span>
-              <span className="block text-[11px] text-muted">Administradora</span>
+              <span className="block max-w-36 truncate font-[family-name:var(--font-display)] text-sm font-semibold text-plum">
+                {user?.name ?? "Admin"}
+              </span>
+              <span className="block text-[11px] text-muted">{user?.roleLabel ?? "Demostración"}</span>
             </span>
             <ChevronDown className="hidden h-4 w-4 text-plum sm:block" />
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Sesión de demostración</DropdownMenuLabel>
-            <DropdownMenuItem asChild>
-              <Link href="/configuracion"><User className="h-4 w-4" /> Mi perfil</Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem asChild>
-              <Link href="/configuracion"><Settings className="h-4 w-4" /> Configuración</Link>
-            </DropdownMenuItem>
+            <DropdownMenuLabel>{user ? user.name : "Sesión de demostración"}</DropdownMenuLabel>
+            {(!user || user.isAdmin) && (
+              <DropdownMenuItem asChild>
+                <Link href="/configuracion"><Settings className="h-4 w-4" /> Configuración</Link>
+              </DropdownMenuItem>
+            )}
             <DropdownMenuSeparator />
-            <DropdownMenuItem disabled className="text-muted data-[disabled]:cursor-not-allowed">
-              <LogOut className="h-4 w-4" /> Cerrar sesión
-              <span className="ml-auto text-[10px]">Fase 6</span>
-            </DropdownMenuItem>
+            {logoutAction ? (
+              <DropdownMenuItem onSelect={() => void logoutAction()}>
+                <LogOut className="h-4 w-4" /> Cerrar sesión
+              </DropdownMenuItem>
+            ) : (
+              <DropdownMenuItem disabled className="text-muted data-[disabled]:cursor-not-allowed">
+                <LogOut className="h-4 w-4" /> Sin sesión (modo demo)
+              </DropdownMenuItem>
+            )}
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import { Boxes, ShoppingBag, ShoppingCart, TrendingUp, TriangleAlert } from "lucide-react";
+import { Boxes, HandCoins, ShoppingBag, ShoppingCart, TrendingUp, TriangleAlert } from "lucide-react";
 import { DemoBadge } from "@/components/dashboard/demo-badge";
 import { FinancialSummary } from "@/components/dashboard/financial-summary";
 import { InventoryDonut } from "@/components/dashboard/inventory-donut";
@@ -14,6 +14,8 @@ import { Badge } from "@/components/ui/badge";
 import { getDashboardData } from "@/lib/dashboard-repository";
 import { formatMoney, formatNumber, formatPct } from "@/lib/format";
 import { parsePeriod } from "@/lib/period";
+import { authMode, requireUser } from "@/lib/server/auth";
+import { getLiveDashboard } from "@/lib/server/dashboard";
 import { DashboardSkeleton } from "./dashboard-skeleton";
 
 export const metadata = { title: "Inicio" };
@@ -21,7 +23,7 @@ export const metadata = { title: "Inicio" };
 export default function DashboardPage(props: PageProps<"/">) {
   return (
     <div className="mx-auto max-w-[1500px] space-y-5">
-      <WelcomeBanner isDemo />
+      <WelcomeBanner isDemo={authMode() === "demo"} />
       <Suspense fallback={<DashboardSkeleton />}>
         <DashboardContent searchParams={props.searchParams} />
       </Suspense>
@@ -31,7 +33,8 @@ export default function DashboardPage(props: PageProps<"/">) {
 
 async function DashboardContent({ searchParams }: Pick<PageProps<"/">, "searchParams">) {
   const { periodo } = await searchParams;
-  const d = await getDashboardData(parsePeriod(periodo));
+  const period = parsePeriod(periodo);
+  const d = authMode() === "demo" ? await getDashboardData(period) : await getLiveDashboard(period, await requireUser());
   const { kpis } = d;
 
   return (
@@ -81,15 +84,19 @@ async function DashboardContent({ searchParams }: Pick<PageProps<"/">, "searchPa
           }
           delay={120}
         />
-        <KpiCard
-          tone="mint"
-          icon={TrendingUp}
-          label="Ganancia neta"
-          value={formatMoney(kpis.netProfit.value)}
-          changePct={kpis.netProfit.changePct}
-          comparisonLabel={`· margen ${formatPct(kpis.netProfit.marginPct, false)}`}
-          delay={180}
-        />
+        {d.canSeeFinancials ? (
+          <KpiCard
+            tone="mint"
+            icon={TrendingUp}
+            label="Ganancia neta"
+            value={formatMoney(kpis.netProfit.value)}
+            changePct={kpis.netProfit.changePct}
+            comparisonLabel={`· margen ${formatPct(kpis.netProfit.marginPct, false)}`}
+            delay={180}
+          />
+        ) : (
+          <KpiCard tone="mint" icon={HandCoins} label="Por cobrar en pedidos" value={formatMoney(d.receivables)} delay={180} />
+        )}
       </section>
 
       {/* Gráficos + acciones */}
@@ -103,12 +110,16 @@ async function DashboardContent({ searchParams }: Pick<PageProps<"/">, "searchPa
       <section className="grid gap-4 lg:grid-cols-12">
         <div className="lg:col-span-12 xl:col-span-6"><RecentOrders orders={d.recentOrders} /></div>
         <div className="lg:col-span-6 xl:col-span-3"><StockAlerts alerts={d.stockAlerts} /></div>
-        <div className="lg:col-span-6 xl:col-span-3"><FinancialSummary income={d.income} periodLabel={d.periodLabel} /></div>
+        {d.canSeeFinancials && (
+          <div className="lg:col-span-6 xl:col-span-3"><FinancialSummary income={d.income} periodLabel={d.periodLabel} /></div>
+        )}
       </section>
 
       <section className="grid gap-4 lg:grid-cols-12">
         <div className="lg:col-span-7"><TopProducts products={d.topProducts} /></div>
-        <div className="lg:col-span-5"><MarginCard grossMargin={d.income.grossMarginPct} operatingMargin={d.income.operatingMarginPct} netMargin={d.income.netMarginPct} /></div>
+        {d.canSeeFinancials && (
+          <div className="lg:col-span-5"><MarginCard grossMargin={d.income.grossMarginPct} operatingMargin={d.income.operatingMarginPct} netMargin={d.income.netMarginPct} /></div>
+        )}
       </section>
     </>
   );

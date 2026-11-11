@@ -1,9 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
-  cacheComponents: true,
-  partialPrefetching: true,
+  // Panel privado: cada página depende de la sesión, se renderiza en cada petición.
+  serverExternalPackages: ["postgres"],
   turbopack: {
     rules: {
       "*.css": {

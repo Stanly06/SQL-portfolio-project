@@ -7,6 +7,5 @@ import type { DashboardData, Period } from "./types";
  * las funciones SQL de supabase/ (income_statement, sales_series...) sin tocar los componentes.
  */
 export async function getDashboardData(period: Period): Promise<DashboardData> {
-  "use cache";
   return buildDemoDashboard(period);
 }

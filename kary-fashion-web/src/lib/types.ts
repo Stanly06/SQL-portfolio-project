@@ -62,7 +62,7 @@ export interface RecentOrder {
   date: string; // ISO yyyy-mm-dd
   total: number;
   status: OrderStatus;
-  channel: "online" | "tienda" | "whatsapp" | "instagram";
+  channel: "online" | "tienda" | "whatsapp" | "instagram" | "tiktok";
 }
 
 export interface StockAlert {
@@ -85,6 +85,10 @@ export interface TopProduct {
 
 export interface DashboardData {
   isDemo: boolean;
+  /** false para empleadas: no ven costos, ganancias ni márgenes. */
+  canSeeFinancials: boolean;
+  /** Balance pendiente de cobro en pedidos activos. */
+  receivables: number;
   period: Period;
   periodLabel: string;
   comparisonLabel: string;
