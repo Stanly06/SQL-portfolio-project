@@ -1,10 +1,11 @@
-# Kary Fashion · Plataforma web (Fase 1: dashboard)
+# Kary Fashion · Plataforma web
 
 Panel de administración para **Kary Fashion** (ropa para damas, calzados, perfumes y accesorios · Mao, Valverde, RD).
-Esta fase entrega la **interfaz visual del dashboard** y la base de diseño que usarán todos los módulos.
+- **Fase 1 (lista):** interfaz del dashboard y sistema de diseño.
+- **Fase 2 (lista):** base de datos PostgreSQL/Supabase con roles, seguridad y reglas de negocio. Ver [`supabase/README.md`](supabase/README.md).
 
 > ⚠️ Todas las cifras que aparecen hoy son **datos de demostración** y están marcadas así en pantalla.
-> Se reemplazan por datos reales en la Fase 2 (base de datos).
+> Se reemplazan por datos reales cuando el panel se conecte a la base de datos (Fase 3).
 
 ## Cómo ejecutarlo
 
@@ -12,6 +13,7 @@ Esta fase entrega la **interfaz visual del dashboard** y la base de diseño que 
 npm install
 npm run dev        # http://localhost:3000
 npm test           # pruebas de las fórmulas financieras
+npm run test:db    # pruebas de la base de datos (requiere PostgreSQL local)
 npm run build      # compilación de producción
 ```
 
@@ -98,11 +100,12 @@ src/
 ```
 
 Para conectar la base de datos solo se cambia el cuerpo de `getDashboardData()`; los componentes no se tocan.
+La función SQL `income_statement()` devuelve exactamente los campos de `IncomeStatementInput`.
 
 ## Plan de las próximas fases
 
 1. ✅ **UI/UX**: dashboard y sistema de diseño.
-2. **Base de datos**: PostgreSQL (Supabase) con productos y variantes, inventario, ventas, pedidos, pagos, gastos, facturas, devoluciones y auditoría; seguridad por filas (RLS) y roles.
+2. ✅ **Base de datos**: PostgreSQL (Supabase) con productos y variantes, inventario, ventas, pedidos, pagos, gastos, facturas, devoluciones y auditoría; seguridad por filas (RLS) y roles. 71 pruebas automáticas.
 3. **Operaciones**: productos, inventario, compras, clientes, pedidos y ventas con transacciones atómicas.
 4. **Finanzas**: gastos, rentabilidad, facturación PDF (NCF/e-CF solo con autorización de la DGII) y reportes Excel/CSV/PDF.
 5. **Tienda online**: catálogo, carrito, checkout con transferencia y pasarela de pago más adelante.

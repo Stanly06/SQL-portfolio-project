@@ -3,8 +3,8 @@ import type { DashboardData, Period } from "./types";
 
 /**
  * Punto único de acceso a los datos del dashboard.
- * Hoy devuelve datos de demostración; en la Fase 2 se sustituye el cuerpo por
- * consultas a PostgreSQL sin tocar los componentes visuales.
+ * Hoy devuelve datos de demostración; en la Fase 3 se sustituye el cuerpo por
+ * las funciones SQL de supabase/ (income_statement, sales_series...) sin tocar los componentes.
  */
 export async function getDashboardData(period: Period): Promise<DashboardData> {
   "use cache";

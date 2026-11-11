@@ -2,8 +2,8 @@
  * DATOS DE DEMOSTRACIÓN — NO SON CIFRAS REALES DE KARY FASHION.
  *
  * Se generan de forma determinística (misma semilla = mismos números) para que el
- * prototipo se vea igual en el servidor y en el navegador. En la Fase 2 este archivo
- * se reemplaza por consultas a PostgreSQL detrás de `dashboard-repository.ts`.
+ * prototipo se vea igual en el servidor y en el navegador. En la Fase 3 este archivo
+ * se reemplaza por la base de datos (Fase 3) detrás de `dashboard-repository.ts`.
  */
 import { buildIncomeStatement, changePct } from "./finance.ts";
 import type {
