@@ -29,7 +29,7 @@ const TABS: { period: Period; label: string }[] = [
   { period: "year", label: "Año" },
 ];
 
-export function SalesChart({ data, period }: { data: ChartPoint[]; period: Period }) {
+export function SalesChart({ data, period, showProfit = true }: { data: ChartPoint[]; period: Period; showProfit?: boolean }) {
   const totalSales = data.reduce((a, p) => a + p.sales, 0);
   const totalProfit = data.reduce((a, p) => a + p.profit, 0);
 
@@ -37,7 +37,7 @@ export function SalesChart({ data, period }: { data: ChartPoint[]; period: Perio
     <Card className="flex h-full flex-col">
       <CardHeader
         icon={<ShoppingCart className="h-5 w-5" />}
-        title="Ventas y ganancias"
+        title={showProfit ? "Ventas y ganancias" : "Ventas"}
         action={
           <div role="tablist" aria-label="Agrupación del gráfico" className="flex rounded-xl bg-canvas p-1 text-xs font-medium">
             {TABS.map((t) => (
@@ -60,7 +60,7 @@ export function SalesChart({ data, period }: { data: ChartPoint[]; period: Perio
       />
       <div className="flex flex-wrap items-center gap-x-6 gap-y-1 px-5 pt-3 text-sm">
         <Legend color={PINK} label="Ventas" value={formatMoney(totalSales)} />
-        <Legend color={LAVENDER} label="Ganancia bruta" value={formatMoney(totalProfit)} />
+        {showProfit && <Legend color={LAVENDER} label="Ganancia bruta" value={formatMoney(totalProfit)} />}
       </div>
       <div className="h-[270px] w-full shrink-0 px-2 pb-3 pt-2 sm:flex-1 sm:min-h-[270px]">
         <ResponsiveContainer width="100%" height="100%">
@@ -87,8 +87,8 @@ export function SalesChart({ data, period }: { data: ChartPoint[]; period: Perio
             <Tooltip content={ChartTooltip} cursor={{ stroke: "#FADCE8", strokeWidth: 2 }} />
             <Area type="monotone" dataKey="sales" name="Ventas" stroke={PINK} strokeWidth={2.5} fill="url(#gVentas)"
                   dot={{ r: 3.5, fill: PINK, strokeWidth: 0 }} activeDot={{ r: 6, stroke: "#fff", strokeWidth: 2 }} />
-            <Area type="monotone" dataKey="profit" name="Ganancia" stroke={LAVENDER} strokeWidth={2.5} fill="url(#gGanancia)"
-                  dot={{ r: 3.5, fill: LAVENDER, strokeWidth: 0 }} activeDot={{ r: 6, stroke: "#fff", strokeWidth: 2 }} />
+            {showProfit && <Area type="monotone" dataKey="profit" name="Ganancia" stroke={LAVENDER} strokeWidth={2.5} fill="url(#gGanancia)"
+                  dot={{ r: 3.5, fill: LAVENDER, strokeWidth: 0 }} activeDot={{ r: 6, stroke: "#fff", strokeWidth: 2 }} />}
           </AreaChart>
         </ResponsiveContainer>
       </div>

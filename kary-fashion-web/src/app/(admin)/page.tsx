@@ -101,24 +101,25 @@ async function DashboardContent({ searchParams }: Pick<PageProps<"/">, "searchPa
 
       {/* Gráficos + acciones */}
       <section className="grid gap-4 lg:grid-cols-12">
-        <div className="lg:col-span-7 xl:col-span-5"><SalesChart data={d.chart} period={d.period} /></div>
+        <div className="lg:col-span-7 xl:col-span-5"><SalesChart data={d.chart} period={d.period} showProfit={d.canSeeFinancials} /></div>
         <div className="lg:col-span-5 xl:col-span-4"><InventoryDonut data={d.inventoryByCategory} /></div>
-        <div className="lg:col-span-12 xl:col-span-3"><QuickActions /></div>
+        <div className="lg:col-span-12 xl:col-span-3"><QuickActions isAdmin={d.canSeeFinancials} /></div>
       </section>
 
-      {/* Tablas y resumen */}
+      {/* Pedidos y alertas */}
       <section className="grid gap-4 lg:grid-cols-12">
-        <div className="lg:col-span-12 xl:col-span-6"><RecentOrders orders={d.recentOrders} /></div>
-        <div className="lg:col-span-6 xl:col-span-3"><StockAlerts alerts={d.stockAlerts} /></div>
-        {d.canSeeFinancials && (
-          <div className="lg:col-span-6 xl:col-span-3"><FinancialSummary income={d.income} periodLabel={d.periodLabel} /></div>
-        )}
+        <div className="lg:col-span-12 xl:col-span-7"><RecentOrders orders={d.recentOrders} /></div>
+        <div className="lg:col-span-12 xl:col-span-5"><StockAlerts alerts={d.stockAlerts} /></div>
       </section>
 
+      {/* Productos y finanzas */}
       <section className="grid gap-4 lg:grid-cols-12">
-        <div className="lg:col-span-7"><TopProducts products={d.topProducts} /></div>
+        <div className={d.canSeeFinancials ? "lg:col-span-6 xl:col-span-5" : "lg:col-span-12"}><TopProducts products={d.topProducts} /></div>
         {d.canSeeFinancials && (
-          <div className="lg:col-span-5"><MarginCard grossMargin={d.income.grossMarginPct} operatingMargin={d.income.operatingMarginPct} netMargin={d.income.netMarginPct} /></div>
+          <>
+            <div className="lg:col-span-6 xl:col-span-4"><FinancialSummary income={d.income} periodLabel={d.periodLabel} /></div>
+            <div className="lg:col-span-12 xl:col-span-3"><MarginCard grossMargin={d.income.grossMarginPct} operatingMargin={d.income.operatingMarginPct} netMargin={d.income.netMarginPct} /></div>
+          </>
         )}
       </section>
     </>

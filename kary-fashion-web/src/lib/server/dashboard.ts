@@ -183,7 +183,8 @@ export async function getLiveDashboard(period: Period, user: CurrentUser): Promi
       chart,
       inventoryByCategory: cats.map((c, i): CategorySlice => ({ ...c, color: PALETTE[i % PALETTE.length] })),
       recentOrders: recent.map((o) => ({
-        code: o.number, customer: o.customer, date: new Date(o.created_at).toISOString().slice(0, 10),
+        code: o.number, customer: o.customer,
+        date: new Intl.DateTimeFormat("en-CA", { timeZone: "America/Santo_Domingo" }).format(new Date(o.created_at)),
         total: o.total_cents, status: ORDER_STATUS_DB[o.status], channel: CHANNEL_DB[o.channel] ?? "tienda",
       })),
       stockAlerts: alerts.map((a) => ({ sku: a.sku, name: a.name, size: a.size ?? "Única", color: a.color ?? "—",

@@ -242,3 +242,30 @@ select test.fails('delete from public.inventory_movements', 'no se modifican', '
 select test.fails('update public.audit_logs set action = ''x''', 'no se modifican', 'la auditoría no se altera');
 select test.ok((select bool_and(pv.stock = coalesce((select sum(quantity) from public.inventory_movements m where m.variant_id = pv.id), 0))
                 from public.product_variants pv), 'la existencia siempre coincide con la suma del kardex');
+
+-- ========== Inventario inicial ==========
+select set_config('request.jwt.claim.sub', '00000000-0000-0000-0000-0000000000a2', false);
+set role authenticated;
+select public.register_initial_stock((select id from public.product_variants where sku = 'PER-0012-100'), 4, 120000);
+select test.ok((select stock from public.product_variants where sku = 'PER-0012-100') = 4, 'existencia inicial cargada');
+select test.ok((select avg_cost_cents from public.variant_costs vc join public.product_variants pv on pv.id = vc.variant_id
+                where pv.sku = 'PER-0012-100') = 120000, 'costo inicial registrado');
+select test.fails($$select public.register_initial_stock((select id from public.product_variants where sku = 'PER-0012-100'), 1, 1)$$,
+                  'ya tiene movimientos', 'la existencia inicial se carga una sola vez');
+reset role;
+select set_config('request.jwt.claim.sub', '00000000-0000-0000-0000-0000000000a4', false);
+set role authenticated;
+select test.fails($$select public.register_initial_stock((select id from public.product_variants where sku = 'VES-0214-RS-M'), 1, 1)$$,
+                  'solo la administración', 'una clienta no puede cargar inventario');
+reset role;
+
+-- ========== Subtotal de compras calculado por la base ==========
+select set_config('request.jwt.claim.sub', '00000000-0000-0000-0000-0000000000a2', false);
+set role authenticated;
+insert into public.purchase_orders (number, status) values ('OC-0099', 'ordered');
+insert into public.purchase_order_items (purchase_order_id, variant_id, quantity, unit_cost_cents)
+values ((select id from public.purchase_orders where number = 'OC-0099'), (select id from public.product_variants where sku = 'VES-0214-RS-M'), 3, 70000);
+select test.ok((select subtotal_cents from public.purchase_orders where number = 'OC-0099') = 210000, 'el subtotal de la compra se calcula solo');
+select test.fails($$update public.purchase_orders set subtotal_cents = 1 where number = 'OC-0099'$$, 'permission denied',
+                  'el subtotal no se puede escribir a mano');
+reset role;

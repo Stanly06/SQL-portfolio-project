@@ -65,7 +65,7 @@ export function Topbar({
   const [unread, setUnread] = useState(true);
 
   return (
-    <header className="sticky top-0 z-20 border-b border-line/70 bg-canvas/85 backdrop-blur-md">
+    <header className="sticky top-0 z-20 print:hidden border-b border-line/70 bg-canvas/85 backdrop-blur-md">
       <div className="flex items-center gap-2 px-4 py-3 sm:gap-3 lg:px-8">
         <button
           type="button"

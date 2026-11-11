@@ -71,7 +71,7 @@ export function AppShell({
         mobileOpen={mobileOpen}
         onCloseMobile={() => setMobileOpen(false)}
       />
-      <div className={cn("transition-[padding] duration-300", collapsed ? "lg:pl-[84px]" : "lg:pl-[268px]")}>
+      <div className={cn("transition-[padding] duration-300 print:!pl-0", collapsed ? "lg:pl-[84px]" : "lg:pl-[268px]")}>
         <Topbar
           onOpenMenu={() => setMobileOpen(true)}
           searchIndex={searchIndex}

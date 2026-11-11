@@ -10,4 +10,8 @@ run "$DIR/tests/00_local_supabase_shim.sql"
 for f in "$DIR"/migrations/*.sql; do run "$f"; done
 run "$DIR/seed.sql"
 run "$DIR/dev_users.sql"
-echo "Base $DB lista. Use DATABASE_URL=postgres://USUARIO:CLAVE@localhost:5432/$DB y AUTH_MODE=dev"
+echo "Base $DB lista. Use DATABASE_URL=postgres://USUARIO:CLAVE@localhost:5432/$DB y AUTH_MODE=dev (agregue --con-actividad para datos de ejemplo)"
+if [ "${1:-}" = "--con-actividad" ]; then
+  run "$DIR/dev_demo_activity.sql"
+  echo "Actividad de ejemplo cargada."
+fi

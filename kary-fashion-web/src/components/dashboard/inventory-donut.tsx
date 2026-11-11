@@ -21,16 +21,16 @@ export function InventoryDonut({ data }: { data: CategorySlice[] }) {
         title="Inventario por categoría"
         action={<Link href="/inventario" className="text-xs font-medium text-pink-strong hover:underline">Ver inventario →</Link>}
       />
-      <div className="flex flex-1 flex-col items-center gap-4 px-5 pb-5 pt-2 sm:flex-row">
-        <div className="relative h-[200px] w-[200px] shrink-0">
+      <div className="flex flex-1 flex-col items-center gap-4 px-5 pb-5 pt-2 sm:flex-row xl:flex-col 2xl:flex-row">
+        <div className="relative h-[180px] w-[180px] shrink-0">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie
                 data={data}
                 dataKey="units"
                 nameKey="category"
-                innerRadius={64}
-                outerRadius={94}
+                innerRadius={58}
+                outerRadius={86}
                 paddingAngle={2}
                 cornerRadius={6}
                 stroke="none"
@@ -53,7 +53,7 @@ export function InventoryDonut({ data }: { data: CategorySlice[] }) {
             </div>
           </div>
         </div>
-        <ul className="w-full space-y-1.5 text-sm">
+        <ul className="grid w-full min-w-0 gap-1.5 text-sm xl:grid-cols-2 2xl:grid-cols-1">
           {data.map((c, i) => (
             <li
               key={c.category}
@@ -62,7 +62,7 @@ export function InventoryDonut({ data }: { data: CategorySlice[] }) {
               className={cn("flex items-center gap-2.5 rounded-lg px-2 py-1 transition-colors", hover === i && "bg-canvas")}
             >
               <span className="h-3 w-3 shrink-0 rounded-full" style={{ background: c.color }} />
-              <span className="text-ink">{c.category}</span>
+              <span className="truncate text-ink">{c.category}</span>
               <span className="tabular ml-auto text-muted">{Math.round((c.units / total) * 100)}%</span>
             </li>
           ))}

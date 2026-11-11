@@ -41,7 +41,7 @@ export function Sidebar({ badges, isAdmin, collapsed, onToggleCollapsed, mobileO
       <aside
         aria-label="Menú principal"
         className={cn(
-          "fixed inset-y-0 left-0 z-40 flex flex-col bg-night text-white/80 transition-[width,transform] duration-300",
+          "fixed inset-y-0 left-0 z-40 flex flex-col bg-night print:hidden text-white/80 transition-[width,transform] duration-300",
           "bg-[radial-gradient(120%_60%_at_0%_0%,rgba(246,91,154,0.18),transparent_60%),radial-gradient(90%_50%_at_100%_100%,rgba(166,107,227,0.16),transparent_60%)]",
           collapsed ? "lg:w-[84px]" : "lg:w-[268px]",
           "w-[268px]",
@@ -96,7 +96,7 @@ export function Sidebar({ badges, isAdmin, collapsed, onToggleCollapsed, mobileO
         </nav>
 
         {/* Tarjeta de marca */}
-        <div className={cn("p-3", collapsed && "lg:hidden")}>
+        <div className={cn("p-3 [@media(max-height:960px)]:hidden", collapsed && "lg:hidden")}>
           <Link
             href="/tienda-online"
             onClick={onCloseMobile}
