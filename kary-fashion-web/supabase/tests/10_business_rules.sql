@@ -28,6 +28,9 @@ begin
 end $$;
 grant execute on all functions in schema test to anon, authenticated;
 
+-- Las pruebas de anticipo usan la regla del 50% (la tienda hoy usa 100%)
+update public.settings set value = jsonb_set(value, '{min_deposit_pct}', '50') where key = 'orders';
+
 -- ---------- usuarios ----------
 insert into auth.users (id, email, raw_user_meta_data) values
   (:'owner', 'kary@example.com', '{"full_name":"Kary (dueña)"}'),
@@ -268,4 +271,18 @@ values ((select id from public.purchase_orders where number = 'OC-0099'), (selec
 select test.ok((select subtotal_cents from public.purchase_orders where number = 'OC-0099') = 210000, 'el subtotal de la compra se calcula solo');
 select test.fails($$update public.purchase_orders set subtotal_cents = 1 where number = 'OC-0099'$$, 'permission denied',
                   'el subtotal no se puede escribir a mano');
+reset role;
+
+-- ========== Configuración validada ==========
+select set_config('request.jwt.claim.sub', '00000000-0000-0000-0000-0000000000a1', false);
+set role authenticated;
+select test.fails($$update public.settings set value = jsonb_set(value, '{min_deposit_pct}', '150') where key = 'orders'$$,
+                  'entre 0% y 100%', 'no se acepta un anticipo mayor al 100%');
+update public.settings set value = jsonb_set(value, '{employee_max_pct}', '15') where key = 'discounts';
+select test.ok((select (value ->> 'employee_max_pct')::int from public.settings where key = 'discounts') = 15, 'la dueña cambia el descuento máximo');
+select test.ok((select count(*) from public.staff_directory) >= 3, 'la dueña ve el directorio del personal');
+reset role;
+select set_config('request.jwt.claim.sub', '00000000-0000-0000-0000-0000000000a4', false);
+set role authenticated;
+select test.ok((select count(*) from public.staff_directory) = 0, 'una clienta no ve el personal');
 reset role;

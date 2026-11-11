@@ -23,7 +23,7 @@ export const metadata = { title: "Inicio" };
 export default function DashboardPage(props: PageProps<"/">) {
   return (
     <div className="mx-auto max-w-[1500px] space-y-5">
-      <WelcomeBanner isDemo={authMode() === "demo"} />
+      <WelcomeBanner isDemo={authMode() === "demo"} photoSrc="/brand/hero-moda.jpg" />
       <Suspense fallback={<DashboardSkeleton />}>
         <DashboardContent searchParams={props.searchParams} />
       </Suspense>

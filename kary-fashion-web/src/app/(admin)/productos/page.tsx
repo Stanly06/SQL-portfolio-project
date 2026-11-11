@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Plus, Search } from "lucide-react";
+import { FileSpreadsheet, Plus, Search } from "lucide-react";
 import { ProductThumb } from "@/components/dashboard/product-thumb";
 import { Badge } from "@/components/ui/badge";
 import { ButtonLink } from "@/components/ui/button";
@@ -41,7 +41,10 @@ export default async function ProductsPage(props: PageProps<"/productos">) {
   return (
     <div className="mx-auto max-w-[1400px]">
       <PageHeader title="Productos" description={`${rows.length} producto(s) en el catálogo`}
-                  actions={res.user.isAdmin && <ButtonLink href="/productos/nuevo"><Plus className="h-4 w-4" /> Nuevo producto</ButtonLink>} />
+                  actions={res.user.isAdmin && <>
+                    <ButtonLink href="/productos/importar" variant="outline"><FileSpreadsheet className="h-4 w-4" /> Importar desde Excel</ButtonLink>
+                    <ButtonLink href="/productos/nuevo"><Plus className="h-4 w-4" /> Nuevo producto</ButtonLink>
+                  </>} />
       <form className="mb-4 flex flex-wrap gap-2">
         <label className="flex min-w-60 flex-1 items-center gap-2 rounded-xl border border-line bg-white px-3">
           <Search className="h-4 w-4 text-muted" />

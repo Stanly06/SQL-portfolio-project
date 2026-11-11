@@ -93,7 +93,7 @@ set role authenticated;
 select public.create_order(jsonb_build_object('customer_id', (select id from public.customers where full_name like 'Rosanna%'),
   'channel', 'whatsapp', 'is_special_order', true, 'expected_date', (current_date + 6)::text,
   'items', jsonb_build_array(jsonb_build_object('description', 'Vestido de fiesta largo, talla M, color esmeralda', 'quantity', 1, 'unit_price_cents', 480000)),
-  'deposit', jsonb_build_object('method', 'transfer', 'amount_cents', 240000, 'reference', 'TR-8812')));
+  'deposit', jsonb_build_object('method', 'transfer', 'amount_cents', 480000, 'reference', 'TR-8812')));
 select public.create_order(jsonb_build_object('customer_id', (select id from public.customers where full_name like 'Yanelis%'),
   'channel', 'instagram', 'shipping_cents', 25000, 'province', 'Montecristi', 'municipality', 'Castañuelas', 'expected_date', (current_date + 2)::text,
   'items', jsonb_build_array(jsonb_build_object('variant_id', (select id from public.product_variants where sku = 'VES-0301-RO-M'), 'quantity', 1),

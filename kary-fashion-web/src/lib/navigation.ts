@@ -73,8 +73,8 @@ export const NAV_ITEMS: NavItem[] = [
       { label: "Catálogo publicado", href: "/tienda-online" },
       { label: "Banners", href: "/tienda-online/banners" },
     ] },
-  { label: "Configuración", adminOnly: true, href: "/configuracion", icon: Settings, phase: 6,
-    description: "Datos del negocio, usuarios, roles y permisos, impuestos y respaldos." },
+  { label: "Configuración", adminOnly: true, href: "/configuracion", icon: Settings, phase: 3,
+    description: "Datos del negocio, reglas de venta, impuestos y usuarios." },
 ];
 
 export function findNavItem(pathname: string): NavItem | undefined {

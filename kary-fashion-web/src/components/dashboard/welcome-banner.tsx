@@ -16,10 +16,21 @@ export function WelcomeBanner({ photoSrc, isDemo }: { photoSrc?: string; isDemo:
         <path d="M0 160 C 150 130, 260 190, 420 170" stroke="#fff" strokeWidth="2" fill="none" opacity="0.6" />
       </svg>
 
-      <div className="relative flex items-center gap-6 px-6 py-7 sm:px-9 sm:py-9">
+      {photoSrc && (
+        <Image
+          src={photoSrc}
+          alt="Modelo con vestido satinado y bolsas de compras"
+          width={600}
+          height={470}
+          priority
+          className="pointer-events-none absolute bottom-0 right-0 hidden h-full w-auto object-cover object-top lg:block
+                     [mask-image:linear-gradient(to_right,transparent,black_30%)]"
+        />
+      )}
+      <div className="relative flex items-center gap-6 px-6 py-7 sm:px-9 sm:py-9 lg:min-h-[230px]">
         <div className="max-w-xl">
           {isDemo && <DemoBadge className="mb-3 md:hidden" />}
-          <h1 className="flex flex-wrap items-center gap-2 text-2xl font-bold tracking-tight sm:text-[32px]">
+          <h1 className="flex flex-wrap items-center gap-2 text-2xl font-bold tracking-tight sm:text-[30px]">
             ¡Bienvenido a Kary Fashion!
             <DressIcon className="h-9 w-9" />
           </h1>
@@ -28,10 +39,8 @@ export function WelcomeBanner({ photoSrc, isDemo }: { photoSrc?: string; isDemo:
           </p>
         </div>
 
-        <div className="relative ml-auto hidden shrink-0 items-center gap-4 md:flex">
-          {photoSrc ? (
-            <Image src={photoSrc} alt="Moda Kary Fashion" width={180} height={220} className="-my-9 h-[220px] w-auto object-contain" />
-          ) : (
+        <div className="relative ml-auto hidden shrink-0 items-center gap-4 md:flex lg:mr-52">
+          {!photoSrc && (
             <Image
               src="/brand/kary-logo.png"
               alt="Logotipo Kary Fashion"
@@ -41,7 +50,7 @@ export function WelcomeBanner({ photoSrc, isDemo }: { photoSrc?: string; isDemo:
               className="h-[130px] w-[130px] drop-shadow-[0_10px_24px_rgba(201,154,46,0.35)]"
             />
           )}
-          <span className="font-[family-name:var(--font-script)] text-5xl leading-none text-plum/80 lg:text-6xl">
+          <span className="font-[family-name:var(--font-script)] text-4xl leading-none text-plum/80 lg:text-5xl 2xl:text-6xl">
             Kary Fashion
           </span>
           <Sparkles className="absolute -top-3 right-4 h-5 w-5 text-gold" />
