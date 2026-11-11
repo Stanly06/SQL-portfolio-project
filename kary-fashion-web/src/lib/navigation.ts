@@ -1,4 +1,5 @@
 import {
+  Banknote,
   Boxes,
   ChartColumn,
   FileText,
@@ -40,6 +41,8 @@ export const NAV_ITEMS: NavItem[] = [
     description: "Tablero de pedidos por estado: nuevo, pago pendiente, preparación, enviado y entregado." },
   { label: "Ventas", href: "/ventas", icon: Receipt, phase: 3,
     description: "Registro de ventas en tienda y online, pagos combinados, devoluciones y reembolsos." },
+  { label: "Caja", href: "/caja", icon: Banknote, phase: 4,
+    description: "Dinero recibido en el día por método de pago y cierre de caja." },
   { label: "Productos", href: "/productos", icon: Package, phase: 3,
     description: "Catálogo con variantes de talla y color, cada una con su SKU, foto, costo y precio." },
   { label: "Inventario", href: "/inventario", icon: Boxes, phase: 3, badgeKey: "stock",
@@ -61,12 +64,7 @@ export const NAV_ITEMS: NavItem[] = [
   { label: "Ganancias", adminOnly: true, href: "/ganancias", icon: TrendingUp, phase: 4,
     description: "Estado de resultados: ganancia bruta, operativa y neta, márgenes." },
   { label: "Reportes", adminOnly: true, href: "/reportes", icon: ChartColumn, phase: 4,
-    description: "Análisis por período, producto, categoría y cliente. Exportación a Excel, CSV y PDF.",
-    children: [
-      { label: "Ventas", href: "/reportes" },
-      { label: "Rentabilidad", href: "/reportes/rentabilidad" },
-      { label: "Inventario", href: "/reportes/inventario" },
-    ] },
+    description: "Análisis por período, producto, categoría y cliente. Exportación a Excel, CSV y PDF." },
   { label: "Tienda Online", href: "/tienda-online", icon: Store, phase: 5,
     description: "Catálogo público, carrito, checkout y seguimiento de pedidos.",
     children: [

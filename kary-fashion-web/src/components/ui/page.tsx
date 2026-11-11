@@ -49,7 +49,7 @@ export function EmptyState({ title, children, action }: { title: string; childre
 }
 
 export function TableWrap({ children }: { children: ReactNode }) {
-  return <div className="-mx-5 -my-5 overflow-x-auto">{children}</div>;
+  return <div className="-mx-5 -mt-5 overflow-x-auto">{children}</div>;
 }
 
 export function NeedsDatabase() {

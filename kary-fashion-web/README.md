@@ -5,6 +5,9 @@ Panel de administración para **Kary Fashion** (ropa para damas, calzados, perfu
 - **Fase 2 (lista):** base de datos PostgreSQL/Supabase con roles, seguridad y reglas de negocio. Ver [`supabase/README.md`](supabase/README.md).
 - **Fase 3 (lista):** inicio de sesión por rol y pantallas de operación: punto de venta, ventas y facturas, pedidos con anticipos,
   productos con tallas y colores, inventario, compras, clientes y proveedores. Capturas en [`docs/capturas`](docs/capturas).
+- **Fase 4 (lista):** caja diaria con cierre, gastos, ganancias (estado de resultados y 12 meses), facturación y
+  reportes (ventas, productos, categorías, clientes, vendedoras, pagos, pedidos, mercancía sin movimiento, inventario)
+  con descarga en Excel y CSV, e impresión o PDF.
 
 > Sin base de datos configurada, el panel abre en **modo demostración** (cifras de ejemplo marcadas en pantalla).
 > Con `DATABASE_URL` usa datos reales y pide inicio de sesión.
@@ -43,7 +46,7 @@ Requisitos: Node.js 20.9 o superior.
 /productos[/nuevo|/:id]    Catálogo, tallas y colores      ← Fase 3 (listo)
 /inventario[/movimientos]  Existencias, ajustes, kardex    ← Fase 3 (listo)
 /compras  /clientes  /proveedores                          ← Fase 3 (listo)
-/facturacion  /gastos  /ganancias  /reportes[/…]         ← Fase 4
+/caja  /gastos  /ganancias  /facturacion  /reportes       ← Fase 4 (listo)
 /tienda-online[/banners]   Tienda pública                ← Fase 5
 /configuracion             Usuarios, roles, impuestos     ← Fase 6
 ```
@@ -112,7 +115,7 @@ La función SQL `income_statement()` devuelve exactamente los campos de `IncomeS
 1. ✅ **UI/UX**: dashboard y sistema de diseño.
 2. ✅ **Base de datos**: PostgreSQL (Supabase) con productos y variantes, inventario, ventas, pedidos, pagos, gastos, facturas, devoluciones y auditoría; seguridad por filas (RLS) y roles. 71 pruebas automáticas.
 3. ✅ **Operaciones**: productos, inventario, compras, clientes, pedidos y ventas con transacciones atómicas.
-4. **Finanzas**: gastos, rentabilidad, facturación PDF (NCF/e-CF solo con autorización de la DGII) y reportes Excel/CSV/PDF.
+4. ✅ **Finanzas**: caja, gastos, rentabilidad, facturación (NCF/e-CF solo con autorización de la DGII) y reportes Excel/CSV/PDF.
 5. **Tienda online**: catálogo, carrito, checkout con transferencia y pasarela de pago más adelante.
 6. **Pruebas y despliegue**: pruebas end-to-end, respaldos, dominio y puesta en producción.
 

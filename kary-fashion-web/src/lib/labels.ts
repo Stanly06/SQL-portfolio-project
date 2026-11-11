@@ -32,3 +32,8 @@ export function formatDay(d: Date | string): string {
   return new Intl.DateTimeFormat("es-DO", { timeZone: "America/Santo_Domingo", day: "2-digit", month: "short", year: "numeric" })
     .format(typeof d === "string" && d.length === 10 ? new Date(`${d}T12:00:00Z`) : new Date(d));
 }
+
+export const EXPENSE_CATEGORY: Record<string, string> = {
+  advertising: "Publicidad", transport: "Transporte", packaging: "Empaques", rent: "Alquiler", internet: "Internet y teléfono",
+  utilities: "Luz y agua", commissions: "Comisiones", salaries: "Sueldos", bank_fees: "Cargos bancarios", taxes: "Impuestos", other: "Otros",
+};

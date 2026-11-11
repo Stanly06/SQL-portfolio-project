@@ -286,3 +286,22 @@ select set_config('request.jwt.claim.sub', '00000000-0000-0000-0000-0000000000a4
 set role authenticated;
 select test.ok((select count(*) from public.staff_directory) = 0, 'una clienta no ve el personal');
 reset role;
+
+-- ========== Cierre de caja ==========
+select set_config('request.jwt.claim.sub', '00000000-0000-0000-0000-0000000000a2', false);
+set role authenticated;
+select public.register_sale(jsonb_build_object('items', jsonb_build_array(
+  jsonb_build_object('variant_id', (select id from public.product_variants where sku = 'PER-0012-100'), 'quantity', 1))));
+insert into public.expenses (category, concept, amount_cents, payment_method) values ('packaging', 'Fundas', 30000, 'cash');
+select test.ok((select sales_cents from public.cash_summary(app.biz_date(now())) where method = 'cash') > 0, 'el resumen de caja suma las ventas en efectivo');
+select test.ok((select expenses_cents from public.cash_summary(app.biz_date(now())) where method = 'cash') >= 30000, 'el resumen resta los gastos pagados en efectivo');
+select public.close_cash_register(app.biz_date(now()), 100000,
+  (select 100000 + net_cents from public.cash_summary(app.biz_date(now())) where method = 'cash') - 5000, 'Prueba');
+select test.ok((select difference_cents from public.cash_closings where business_date = app.biz_date(now())) = -5000, 'el cierre muestra el faltante');
+select test.fails($$select public.close_cash_register(app.biz_date(now()), 0, 0)$$, 'ya fue cerrada', 'un día se cierra una sola vez');
+select test.fails($$update public.cash_closings set counted_cash_cents = 1$$, 'permission denied', 'un cierre no se edita');
+reset role;
+select set_config('request.jwt.claim.sub', '00000000-0000-0000-0000-0000000000a4', false);
+set role authenticated;
+select test.fails($$select * from public.cash_summary(app.biz_date(now()))$$, 'Acceso denegado', 'una clienta no ve la caja');
+reset role;
