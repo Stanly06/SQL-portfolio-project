@@ -11,7 +11,7 @@ const PHASES: Record<number, string> = {
 };
 
 export function generateStaticParams() {
-  const paths = NAV_ITEMS.filter((i) => i.phase >= 5).flatMap((i) => [i.href, ...(i.children?.map((c) => c.href) ?? [])]);
+  const paths = NAV_ITEMS.filter((i) => i.phase >= 6).flatMap((i) => [i.href, ...(i.children?.map((c) => c.href) ?? [])]);
   return [...new Set(paths)].filter((p) => p !== "/").map((p) => ({ modulo: p.slice(1).split("/") }));
 }
 

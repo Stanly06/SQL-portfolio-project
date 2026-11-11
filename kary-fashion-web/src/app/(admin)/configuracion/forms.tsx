@@ -2,7 +2,7 @@
 
 import { useActionState } from "react";
 import { Field, FormMessage, SubmitButton } from "@/components/ui/form";
-import { saveBusiness, saveRules, saveTax, setRole } from "./actions";
+import { saveBusiness, saveRules, saveStore, saveTax, setRole } from "./actions";
 
 type Business = { name?: string | null; address?: string | null; phone?: string | null; instagram?: string | null; tiktok?: string | null; rnc?: string | null };
 
@@ -79,6 +79,33 @@ export function UserRoleForm({ id, role, active, isSelf }: { id: string; role: s
       {!isSelf && <SubmitButton variant="outline" pendingText="…" className="px-3 py-1.5 text-xs">Guardar</SubmitButton>}
       {state?.error && <span className="text-xs text-danger">{state.error}</span>}
       {state?.message && <span className="text-xs text-success">✓</span>}
+    </form>
+  );
+}
+
+type Store = { open?: boolean; whatsapp?: string | null; announcement?: string | null; delivery_fee_cents?: number; pickup_address?: string | null;
+  bank_name?: string | null; account_type?: string | null; account_number?: string | null; account_holder?: string | null };
+
+export function StoreForm({ s, canEdit }: { s: Store; canEdit: boolean }) {
+  const [state, action] = useActionState(saveStore, null);
+  return (
+    <form action={action} className="space-y-3">
+      <fieldset disabled={!canEdit} className="grid gap-3 sm:grid-cols-2">
+        <label className="flex items-center gap-2 text-sm sm:col-span-2">
+          <input type="checkbox" name="open" defaultChecked={s.open ?? true} className="h-4 w-4 accent-pink" /> La tienda online recibe pedidos
+        </label>
+        <Field label="WhatsApp de la tienda" hint="Adonde las clientas envían el comprobante."><input name="whatsapp" defaultValue={s.whatsapp ?? ""} className="input" /></Field>
+        <Field label="Mensaje en la barra superior"><input name="announcement" defaultValue={s.announcement ?? ""} placeholder="Envíos a todo el país" className="input" /></Field>
+        <Field label="Costo de envío (RD$)"><input name="delivery_fee" inputMode="decimal" defaultValue={((s.delivery_fee_cents ?? 0) / 100).toFixed(2)} className="input" /></Field>
+        <Field label="Dirección para retirar"><input name="pickup_address" defaultValue={s.pickup_address ?? ""} className="input" /></Field>
+        <Field label="Banco"><input name="bank_name" defaultValue={s.bank_name ?? ""} placeholder="Banreservas, Popular, BHD…" className="input" /></Field>
+        <Field label="Tipo de cuenta"><input name="account_type" defaultValue={s.account_type ?? ""} placeholder="Ahorros / Corriente" className="input" /></Field>
+        <Field label="Número de cuenta"><input name="account_number" defaultValue={s.account_number ?? ""} className="input" /></Field>
+        <Field label="A nombre de"><input name="account_holder" defaultValue={s.account_holder ?? ""} className="input" /></Field>
+      </fieldset>
+      <p className="text-xs text-muted">La cuenta se muestra a la clienta después de hacer su pedido, para que transfiera.</p>
+      <FormMessage state={state} />
+      {canEdit && <div className="flex justify-end"><SubmitButton>Guardar tienda</SubmitButton></div>}
     </form>
   );
 }

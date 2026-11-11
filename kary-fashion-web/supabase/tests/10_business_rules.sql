@@ -198,7 +198,7 @@ select test.ok((select sum(amount_cents) from public.payments where order_id = (
                'anticipo + abono + pago final = total del pedido');
 -- pedido online de la clienta con cuenta
 select public.create_order(jsonb_build_object('customer_id', (select id from public.customers where auth_user_id = :'client'),
-  'channel', 'online', 'items', jsonb_build_array(jsonb_build_object('variant_id', (select id from public.product_variants where sku = 'BLU-0102-BL-M'), 'quantity', 1))));
+  'channel', 'online', 'items', jsonb_build_array(jsonb_build_object('variant_id', (select id from public.product_variants where sku = 'BLU-0102-BL-S'), 'quantity', 1))));
 select test.fails($$select public.change_order_status((select id from public.orders where number = 'KF-1002'), 'shipped')$$,
                   'No se puede pasar', 'las transiciones de estado se controlan');
 reset role;
@@ -305,3 +305,23 @@ select set_config('request.jwt.claim.sub', '00000000-0000-0000-0000-0000000000a4
 set role authenticated;
 select test.fails($$select * from public.cash_summary(app.biz_date(now()))$$, 'Acceso denegado', 'una clienta no ve la caja');
 reset role;
+
+-- ========== Tienda online (visitante sin cuenta) ==========
+set role anon;
+select test.ok((public.store_info() ->> 'name') = 'Kary Fashion', 'la tienda muestra sus datos públicos');
+select test.ok(public.store_info() ? 'account_number' and not (public.store_info() ? 'max_orders_per_hour'), 'no expone datos internos');
+select test.fails($$select public.place_online_order(jsonb_build_object('customer', jsonb_build_object('full_name', 'Ana Pérez', 'phone', '809-555-7000'),
+  'items', jsonb_build_array(jsonb_build_object('variant_id', (select variant_id from public.store_catalog where sku = 'VES-0214-RS-M'), 'quantity', 1)),
+  'website', 'spam'))$$, 'No se pudo', 'el campo trampa bloquea robots');
+select test.fails($$select public.place_online_order(jsonb_build_object('customer', jsonb_build_object('full_name', 'Ana Pérez', 'phone', '12345'),
+  'items', jsonb_build_array(jsonb_build_object('variant_id', 1, 'quantity', 1))))$$, 'teléfono dominicano', 'teléfono inválido rechazado');
+select test.fails($$select public.place_online_order(jsonb_build_object('customer', jsonb_build_object('full_name', 'Ana Pérez', 'phone', '8095557000'),
+  'items', jsonb_build_array(jsonb_build_object('variant_id', 5, 'quantity', 1))))$$, 'ya no está disponible', 'no se pide un producto no publicado');
+select set_config('test.order', public.place_online_order(jsonb_build_object('customer', jsonb_build_object('full_name', 'Ana Pérez', 'phone', '809-555-7000', 'address', 'C/ Duarte 10', 'province', 'Valverde'),
+  'delivery', 'delivery', 'items', jsonb_build_array(jsonb_build_object('variant_id', (select variant_id from public.store_catalog where sku = 'BLU-0102-BL-S'), 'quantity', 1))))::text, false);
+select test.ok((current_setting('test.order')::jsonb ->> 'shipping_cents')::bigint = 20000, 'pedido online con envío');
+select test.ok((public.track_order(current_setting('test.order')::jsonb ->> 'number', '8095557000') ->> 'status') = 'pending_payment', 'la clienta sigue su pedido con número y teléfono');
+select test.ok(public.track_order(current_setting('test.order')::jsonb ->> 'number', '8090000000') is null, 'con otro teléfono no se ve el pedido');
+select test.fails('select * from public.orders', 'permission denied', 'el visitante no lee pedidos directamente');
+reset role;
+select test.ok((select channel from public.orders order by id desc limit 1) = 'online', 'el pedido llega al panel como pedido web');

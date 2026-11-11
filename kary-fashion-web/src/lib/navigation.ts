@@ -65,12 +65,8 @@ export const NAV_ITEMS: NavItem[] = [
     description: "Estado de resultados: ganancia bruta, operativa y neta, márgenes." },
   { label: "Reportes", adminOnly: true, href: "/reportes", icon: ChartColumn, phase: 4,
     description: "Análisis por período, producto, categoría y cliente. Exportación a Excel, CSV y PDF." },
-  { label: "Tienda Online", href: "/tienda-online", icon: Store, phase: 5,
-    description: "Catálogo público, carrito, checkout y seguimiento de pedidos.",
-    children: [
-      { label: "Catálogo publicado", href: "/tienda-online" },
-      { label: "Banners", href: "/tienda-online/banners" },
-    ] },
+  { label: "Tienda Online", adminOnly: true, href: "/tienda-online", icon: Store, phase: 5,
+    description: "Productos publicados, fotos mejoradas y pedidos de la web." },
   { label: "Configuración", adminOnly: true, href: "/configuracion", icon: Settings, phase: 3,
     description: "Datos del negocio, reglas de venta, impuestos y usuarios." },
 ];

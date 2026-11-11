@@ -42,6 +42,14 @@ export async function asUser<T>(userId: string, fn: (tx: Tx) => Promise<T>): Pro
   }) as Promise<T>;
 }
 
+/** Ejecuta `fn` como visitante anónimo de la tienda online (solo lo que el rol anon puede ver). */
+export async function asAnon<T>(fn: (tx: Tx) => Promise<T>): Promise<T> {
+  return sql().begin(async (tx) => {
+    await tx`set local role anon`;
+    return fn(tx);
+  }) as Promise<T>;
+}
+
 /** Solo para el modo de desarrollo: lista las cuentas del personal sin sesión. */
 export async function listStaffForDevLogin() {
   return sql()<{ id: string; full_name: string; role: string }[]>`

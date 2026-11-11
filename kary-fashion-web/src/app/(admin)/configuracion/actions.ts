@@ -1,6 +1,6 @@
 "use server";
 
-import { parseIntStrict, text, UserError, type ActionState } from "@/lib/server/actions";
+import { parseIntStrict, parseMoney, text, UserError, type ActionState } from "@/lib/server/actions";
 import { mutate } from "@/lib/server/mutate";
 
 const OWNER_ONLY = "Solo la dueña puede cambiar la configuración.";
@@ -50,4 +50,20 @@ export async function setRole(_: ActionState, form: FormData): Promise<ActionSta
     await tx`select public.set_user_role(${String(form.get("user_id"))}::uuid, ${role}, ${form.get("active") === "on"})`;
     return "Acceso actualizado.";
   }, { admin: true, revalidate: ["/configuracion"] });
+}
+
+export async function saveStore(_: ActionState, form: FormData): Promise<ActionState> {
+  return mutate(async (tx, user) => {
+    if (!user.isOwner) throw new UserError(OWNER_ONLY);
+    const whatsapp = (text(form.get("whatsapp")) ?? "").replace(/\D/g, "");
+    if (whatsapp && whatsapp.length !== 10) throw new UserError("El WhatsApp debe tener 10 dígitos (809, 829 u 849).");
+    const patch = {
+      open: form.get("open") === "on", whatsapp: whatsapp || null, announcement: text(form.get("announcement")),
+      delivery_fee_cents: parseMoney(form.get("delivery_fee"), "costo de envío"), pickup_address: text(form.get("pickup_address")),
+      bank_name: text(form.get("bank_name")), account_type: text(form.get("account_type")),
+      account_number: text(form.get("account_number")), account_holder: text(form.get("account_holder")),
+    };
+    await tx`update public.settings set value = value || ${tx.json(patch)}::jsonb where key = 'store'`;
+    return patch.open ? "Datos de la tienda guardados." : "Guardado. La tienda online quedó pausada (no recibe pedidos).";
+  }, { admin: true, revalidate: ["/configuracion", "/tienda", "/tienda-online"] });
 }

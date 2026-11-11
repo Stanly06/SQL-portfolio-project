@@ -3,7 +3,7 @@ import { NeedsDatabase, PageHeader, Panel, TableWrap } from "@/components/ui/pag
 import { formatDay } from "@/lib/labels";
 import { ROLE_LABEL, type Role } from "@/lib/server/auth";
 import { loadAs } from "@/lib/server/page";
-import { BusinessForm, RulesForm, TaxForm, UserRoleForm } from "./forms";
+import { BusinessForm, RulesForm, StoreForm, TaxForm, UserRoleForm } from "./forms";
 
 export const metadata = { title: "Configuración" };
 
@@ -34,6 +34,11 @@ export default async function SettingsPage() {
         </Panel>
         <Panel title="Impuestos" actions={tax.charges_itbis ? <Badge tone="info">Cobra ITBIS</Badge> : <Badge tone="neutral">Sin ITBIS</Badge>}>
           <TaxForm charges={Boolean(tax.charges_itbis)} rate={Number(tax.itbis_rate_pct ?? 18)} canEdit={owner} />
+        </Panel>
+      </div>
+      <div id="tienda" className="scroll-mt-24">
+        <Panel title="Tienda online" actions={<a href="/tienda" target="_blank" rel="noreferrer" className="text-xs font-medium text-pink-strong hover:underline">Ver la tienda →</a>}>
+          <StoreForm s={(s.store ?? {}) as Record<string, never>} canEdit={owner} />
         </Panel>
       </div>
       <Panel title="Usuarios y permisos">
